@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import Increase from "./Images/positiveSign.svg";
 import Decrease from "./Images/negativeSign.svg";
 import creditCard from "./Images/creditCards.svg";
+import { submitAPI } from "./Api/fetchAPI";
 
 const BookingForm = ({ availableTimes, dispatch }) => {
   const [numberOfGuests, setGuests] = useState(0);
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
 
   const handleIncrease = () => {
     setGuests(numberOfGuests + 1);
@@ -16,6 +19,23 @@ const BookingForm = ({ availableTimes, dispatch }) => {
   const handleDecrease = () => {
     if (numberOfGuests > 0) {
       setGuests(numberOfGuests - 1);
+    }
+  };
+
+  const submitForm = async (formData) => {
+    try {
+      const success = await submitAPI(formData);
+      if (success) {
+        const existingBookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        existingBookings.push(formData);
+        localStorage.setItem('bookings', JSON.stringify(existingBookings));
+        navigate('/confirmed');
+      } else {
+        alert('Booking failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('An error occurred. Please try again.');
     }
   };
 
@@ -55,20 +75,21 @@ const BookingForm = ({ availableTimes, dispatch }) => {
         then: Yup.string().required('Required'),
       }),
     }),
-    onSubmit: values => {
-      if (step === 1) {
-        setStep(2);
-      } else {
-        alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      try {
+        await submitForm(values);
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred. Please try again.');
       }
     },
   });
 
-  const handleDateChange = (e) => {
-    formik.handleChange(e);
-    dispatch({ type: 'UPDATE_TIMES', date: e.target.value });
-  };
-
+  useEffect(() => {
+    if (formik.values.date) {
+      dispatch({ type: 'UPDATE_TIMES', payload: formik.values.date });
+    }
+  }, [formik.values.date, dispatch]);
 
   const renderStepContent = () => {
     switch (step) {
@@ -130,7 +151,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
                 name="date"
                 type="date"
                 className={fieldStyle}
-                onChange={handleDateChange}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.date}
               />
@@ -273,53 +294,57 @@ const BookingForm = ({ availableTimes, dispatch }) => {
           </>
         );
       default:
-        return null;
+        return <div>Invalid step</div>;
     }
+  };
+
+  const handleNextStep = () => {
+    setStep(step + 1);
+  };
+
+  const handlePrevStep = () => {
+    setStep(step - 1);
   };
 
   return (
     <>
-
-        <div className="container mx-auto flex flex-col md:flex-row md:space-x-8 px-4 bg-[#78d454] py-14">
+    <div className="container mx-auto flex flex-col md:flex-row md:space-x-8 px-4 bg-[#78d454] py-14">
         <div className="flex flex-col space-y-4 md:space-y-6 md:w-1/2 text-center md:text-left">
-          <h1 className="text-black text-xl font-semibold md:text-2xl lg:text-3xl">
+          <h1 className="text-black text-2xl font-semibold md:text-2xl lg:text-3xl">
           Book a table by filling form below and check your email for details of the booking
           </h1>
           <p className="text-white text-base md:text-lg lg:text-xl mx-auto md:mx-0">
           We Charge $50 deposit to hold your booking for you
+
           </p>
         </div>
 
         <div className="mt-8 md:mt-0 flex justify-center">
-          <img src={creditCard} alt="Hero-Image-credit-card" className="w-[235px] h-[168px]" />
+          <img src={creditCard} alt="Hero-Image-credit-card" className="w-[235px] h-[168px] " />
         </div>
       </div>
-      <form onSubmit={formik.handleSubmit} className="container mx-auto my-10 space-y-6">
-        <div className="flex items-center justify-center space-x-4">
-          <div className={`w-14 h-14 rounded-full ${step === 1 ? 'bg-[#78d454]' : 'bg-[#000000]'}`} />
-          <hr className="border-t border-[#000000] w-14" />
-          <div className={`w-14 h-14 rounded-full ${step === 2 ? 'bg-[#78d454]' : 'bg-[#000000]'}`} />
-        </div>
-        {renderStepContent()}
-        <div className="flex justify-center space-x-4">
-          {step === 2 && (
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="px-4 py-2 bg-black rounded-3xl text-white"
-            >
-              Back
-            </button>
-          )}
-          <button
-            type="submit"
-            className="px-4 py-2 bg-[#78d454] rounded-3xl text-white"
-          >
-            {step === 1 ? 'Next' : 'Submit'}
+    <form onSubmit={formik.handleSubmit} className="max-w-[1080px] mx-auto p-8">
+      {renderStepContent()}
+      <div className="flex inlineflex flex-row space-y-8 md:space-y-6 md:w-1/2 text-center md:text-left">
+        {step > 1 && (
+          <button type="button" onClick={handlePrevStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium mx-auto md:mx-0">
+            Previous
           </button>
-        </div>
-      </form>
+        )}
+        {step < 2 && (
+          <button type="button" onClick={handleNextStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium mx-auto md:mx-0">
+            Next
+          </button>
+        )}
+        {step === 2 && (
+          <button type="submit" className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium mx-auto md:mx-0">
+            Submit
+          </button>
+        )}
+      </div>
+    </form>
     </>
+
   );
 };
 

@@ -1,8 +1,29 @@
-import { act } from 'react';
-import { render, screen } from '@testing-library/react';
-import { initializeTimes, updateTimes } from './ReducerFunctions'; // Ensure this path is correct
+import React from 'react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
+import { initializeTimes, updateTimes } from './ReducerFunctions';
 import BookingForm from './BookingForm';
-import App from './App';
+import '@testing-library/jest-dom';
+
+const mockDispatch = jest.fn();
+
+
+test('BookingForm can be submitted by the user', () => {
+
+  render(<BookingForm availableTimes={['10:00 AM', '11:00 AM']} dispatch={mockDispatch} />);
+
+  fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'John' } });
+  fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: 'Doe' } });
+  fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'john.doe@example.com' } });
+  fireEvent.change(screen.getByLabelText(/Date/i), { target: { value: '2024-08-01' } });
+  fireEvent.change(screen.getByLabelText(/Available Time/i), { target: { value: '10:00 AM' } });
+
+
+  fireEvent.click(screen.getByLabelText(/Indoor/i));
+
+  fireEvent.click(screen.getByText(/Next/i));
+
+  expect(mockDispatch).toHaveBeenCalledWith({ type: 'UPDATE_TIMES', date: '2024-08-01' });
+});
 
 
 test('Renders the BookingForm heading and text', () => {

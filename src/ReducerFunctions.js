@@ -1,19 +1,13 @@
-export function initializeTimes() {
-    return ["17:00", "18:00", "19:00", "20:00", "21:00", "22:00"];
-  }
+import {submitAPI, fetchAPI} from "./Api/fetchAPI";
 
-  export function updateTimes(state, action) {
-    switch (action.type) {
-      case 'UPDATE_TIMES':
-        const selectedDate = new Date(action.date);
-        const day = selectedDate.getDay();
+export const initializeTimes = () => {
+  const today = new Date();
+  return fetchAPI(today);
+};
 
-        if (day === 0 || day === 6) { // Weekend (Sunday=0, Saturday=6)
-          return ["17:00", "18:00", "19:00", "20:00"];
-        } else { // Weekday
-          return ["18:00", "19:00", "20:00", "21:00", "22:00"];
-        }
-      default:
-        return state;
-    }
+export const updateTimes = (state, action) => {
+  if (action.type === 'UPDATE_TIMES') {
+    return fetchAPI(new Date(action.payload));
   }
+  return state;
+};

@@ -8,30 +8,36 @@ import Testimonials from './Testmonials';
 import Aboutus from './Aboutus';
 import Footer from './Footer';
 import BookingForm from './BookingForm';
+import ConfirmedBooking from './ConfirmedBooking';
 import { initializeTimes, updateTimes } from './ReducerFunctions';
 
-function App() {
-
-
+function MainApp() {
   const [availableTimes, dispatch] = useReducer(updateTimes, [], initializeTimes);
 
   return (
+    <div>
+      <Header className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+      <Routes>
+        <Route path="/" element={
+          <>
+            <Hero className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+            <Highlights className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+            <Testimonials className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+            <Aboutus className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+          </>
+        } />
+        <Route path="/booking" element={<BookingForm availableTimes={availableTimes} dispatch={dispatch} />} />
+        <Route path="/confirmed" element={<ConfirmedBooking />} />
+      </Routes>
+      <Footer className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+    </div>
+  );
+}
+
+function App() {
+  return (
     <Router>
-      <div>
-        <Header className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-        <Routes>
-          <Route path="/" element={
-            <>
-              <Hero className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-              <Highlights className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-              <Testimonials className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-              <Aboutus className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-            </>
-          } />
-          <Route path="/booking" element={<BookingForm availableTimes={availableTimes} dispatch={dispatch} className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />} />
-        </Routes>
-        <Footer className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-      </div>
+      <MainApp />
     </Router>
   );
 }
