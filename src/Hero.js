@@ -9,7 +9,7 @@ const Hero = () => {
 
   return (
     <main className="bg-[#78d454] py-14">
-      <div className="container mx-auto flex flex-col md:flex-row md:space-x-8 px-4">
+      <div className="container mx-auto lg:flex-row sm:flex-col md:flex-row md:space-x-8 px-4">
         <div className="flex flex-col space-y-4 md:space-y-6 md:w-1/2 text-center md:text-left">
           <h1 className="text-black text-2xl font-semibold md:text-2xl lg:text-5xl">
             Delicious Flavors that speak louder than words

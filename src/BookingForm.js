@@ -6,11 +6,30 @@ import Increase from "./Images/positiveSign.svg";
 import Decrease from "./Images/negativeSign.svg";
 import creditCard from "./Images/creditCards.svg";
 import { submitAPI } from "./Api/fetchAPI";
+import Cards from 'react-credit-cards';
+import 'react-credit-cards/es/styles-compiled.css';
+import InputMask from 'react-input-mask';
 
 const BookingForm = ({ availableTimes, dispatch }) => {
   const [numberOfGuests, setGuests] = useState(0);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
+  const [cardDetails, setCardDetails] = useState({
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    name: '',
+    focused: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCardDetails({ ...cardDetails, [name]: value });
+  };
+
+  const handleInputFocus = (e) => {
+    setCardDetails({ ...cardDetails, focused: e.target.name });
+  };
 
   const handleIncrease = () => {
     setGuests(numberOfGuests + 1);
@@ -39,7 +58,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
     }
   };
 
-  const fieldStyle = "h-[54px] bg-[#fefffd] rounded-3xl border border-[#78d454] w-[326px] py-4 px-4";
+  const fieldStyle = "h-[54px] bg-[#fefffd] rounded-3xl border border-[#78d454] w-full md:w-[326px] py-4 px-4";
   const labelStyle = "text-black text-base font-medium";
 
   const formik = useFormik({
@@ -95,7 +114,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
     switch (step) {
       case 1:
         return (
-          <div className="container mx-auto pl-48 items-center py-8 space-y-6">
+          <div className="container mx-auto px-4 md:px-8 py-8 space-y-6">
             <div className="flex flex-col items-left space-y-2">
               <label htmlFor="firstName" className={labelStyle}>First Name</label>
               <input
@@ -228,7 +247,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
               <textarea
                 id="notes"
                 name="notes"
-                className="w-[505px] h-[228px] bg-[#fefffe] rounded-3xl border border-[#78d454] p-4"
+                className="w-full md:w-[505px] h-[228px] bg-[#fefffe] rounded-3xl border border-[#78d454] p-4"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.notes}
@@ -245,14 +264,15 @@ const BookingForm = ({ availableTimes, dispatch }) => {
             <div className="container mx-auto px-4 space-y-6">
               <div className="flex flex-col items-left space-y-2">
                 <label htmlFor="cardNumber" className={labelStyle}>Card Number</label>
-                <input
+                <InputMask
                   id="cardNumber"
                   name="cardNumber"
-                  type="text"
+                  mask="9999 9999 9999 9999"
                   className={fieldStyle}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.cardNumber}
+                  placeholder="1234 5678 9012 3456"
                 />
                 {formik.touched.cardNumber && formik.errors.cardNumber ? (
                   <div className="text-red-500 text-sm">{formik.errors.cardNumber}</div>
@@ -261,14 +281,15 @@ const BookingForm = ({ availableTimes, dispatch }) => {
 
               <div className="flex flex-col items-left space-y-2">
                 <label htmlFor="expiryDate" className={labelStyle}>Expiry Date</label>
-                <input
+                <InputMask
                   id="expiryDate"
                   name="expiryDate"
-                  type="text"
+                  mask="99/99"
                   className={fieldStyle}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.expiryDate}
+                  placeholder="MM/YY"
                 />
                 {formik.touched.expiryDate && formik.errors.expiryDate ? (
                   <div className="text-red-500 text-sm">{formik.errors.expiryDate}</div>
@@ -277,18 +298,29 @@ const BookingForm = ({ availableTimes, dispatch }) => {
 
               <div className="flex flex-col items-left space-y-2">
                 <label htmlFor="cvv" className={labelStyle}>CVV</label>
-                <input
+                <InputMask
                   id="cvv"
                   name="cvv"
-                  type="text"
+                  mask="999"
                   className={fieldStyle}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.cvv}
+                  placeholder="123"
                 />
                 {formik.touched.cvv && formik.errors.cvv ? (
                   <div className="text-red-500 text-sm">{formik.errors.cvv}</div>
                 ) : null}
+              </div>
+
+              <div className="flex justify-center mt-4">
+                <Cards
+                  number={cardDetails.cardNumber}
+                  name={formik.values.firstName + ' ' + formik.values.lastName}
+                  expiry={cardDetails.expiryDate}
+                  cvc={cardDetails.cvv}
+                  focused={cardDetails.focused}
+                />
               </div>
             </div>
           </>
@@ -298,8 +330,28 @@ const BookingForm = ({ availableTimes, dispatch }) => {
     }
   };
 
-  const handleNextStep = () => {
-    setStep(step + 1);
+  const handleNextStep = async () => {
+    // Validate the form
+    await formik.validateForm();
+
+    // Check if there are errors
+    if (Object.keys(formik.errors).length === 0) {
+      setStep(step + 1);
+    } else {
+      // Touch all fields to show validation errors
+      formik.setTouched({
+        firstName: true,
+        lastName: true,
+        email: true,
+        date: true,
+        time: true,
+        ...(step === 2 && {
+          cardNumber: true,
+          expiryDate: true,
+          cvv: true,
+        }),
+      });
+    }
   };
 
   const handlePrevStep = () => {
@@ -308,14 +360,13 @@ const BookingForm = ({ availableTimes, dispatch }) => {
 
   return (
     <>
-    <div className="container mx-auto flex flex-col md:flex-row md:space-x-8 px-4 bg-[#78d454] py-14">
+      <div className="container mx-auto flex flex-col md:flex-row md:space-x-8 px-4 bg-[#78d454] py-14">
         <div className="flex flex-col space-y-4 md:space-y-6 md:w-1/2 text-center md:text-left">
           <h1 className="text-black text-2xl font-semibold md:text-2xl lg:text-3xl">
-          Book a table by filling form below and check your email for details of the booking
+            Book a table by filling form below and check your email for details of the booking
           </h1>
           <p className="text-white text-base md:text-lg lg:text-xl mx-auto md:mx-0">
-          We Charge $50 deposit to hold your booking for you
-
+            We Charge $50 deposit to hold your booking for you
           </p>
         </div>
 
@@ -323,28 +374,42 @@ const BookingForm = ({ availableTimes, dispatch }) => {
           <img src={creditCard} alt="Hero-Image-credit-card" className="w-[235px] h-[168px] " />
         </div>
       </div>
-    <form onSubmit={formik.handleSubmit} className="max-w-[1080px] mx-auto p-8">
-      {renderStepContent()}
-      <div className="flex inlineflex flex-row space-y-8 md:space-y-6 md:w-1/2 text-center md:text-left">
-        {step > 1 && (
-          <button type="button" onClick={handlePrevStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium mx-auto md:mx-0">
-            Previous
-          </button>
-        )}
-        {step < 2 && (
-          <button type="button" onClick={handleNextStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium mx-auto md:mx-0">
-            Next
-          </button>
-        )}
-        {step === 2 && (
-          <button type="submit" className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium mx-auto md:mx-0">
-            Submit
-          </button>
-        )}
-      </div>
-    </form>
-    </>
 
+      <div className="container mx-auto my-8 flex justify-center items-center">
+        <div className="flex items-center space-x-4">
+          <div className={`w-14 h-14 rounded-full ${step >= 1 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
+          <div className="h-2 w-24 bg-black relative">
+            <div className={`absolute h-1 ${step >= 2 ? 'bg-[#78d454]' : 'bg-black'} transition-all duration-300`} style={{ width: step >= 2 ? '100%' : '0%' }}></div>
+          </div>
+          <div className={`w-14 h-14 rounded-full ${step >= 2 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
+          <div className="h-2 w-24 bg-black relative">
+            <div className={`absolute h-1 ${step >= 3 ? 'bg-[#78d454]' : 'bg-black'} transition-all duration-300`} style={{ width: step >= 3 ? '100%' : '0%' }}></div>
+          </div>
+          <div className={`w-14 h-14 rounded-full ${step >= 3 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
+        </div>
+      </div>
+
+      <form onSubmit={formik.handleSubmit} className="max-w-[1080px] mx-auto p-8">
+        {renderStepContent()}
+        <div className="flex justify-end mt-8 space-x-4">
+          {step > 1 && (
+            <button type="button" onClick={handlePrevStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
+              Previous
+            </button>
+          )}
+          {step < 2 && (
+            <button type="button" onClick={handleNextStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
+              Next
+            </button>
+          )}
+          {step === 2 && (
+            <button type="submit" className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
+    </>
   );
 };
 

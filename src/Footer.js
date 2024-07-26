@@ -41,7 +41,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+        <div className="mt-8 pt-8 flex flex-row md:flex-row justify-between items-center text-center md:text-left">
           <h3 className="text-[#e7eae6]/60 text-sm font-normal">© 2024 All rights reserved</h3>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <img src={twitterIcon} alt="Twitter-icon" className="w-6 h-6"/>

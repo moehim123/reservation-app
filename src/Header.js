@@ -9,14 +9,14 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="shadow-md pt-4 pb-4 flex flex-col items-center md:items-start">
-      <div className="container mx-auto flex justify-between items-center px-4 md:px-0 relative">
+    <header className="shadow-md pt-4 pb-4 flex flex-col md:flex-row md:justify-between md:items-center">
+      <div className="container mx-auto flex justify-between items-center px-4 md:px-0 relative w-full">
         <div className="flex items-center space-x-2">
           <img src={Logo} alt="logo-image" className="w-12" />
           <h1 className="text-black text-lg font-medium">Little Lemon</h1>
         </div>
 
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="text-gray-800 hover:text-green-600 focus:outline-none"
@@ -25,7 +25,7 @@ const Header = () => {
           </button>
         </div>
 
-        <nav className={`hidden md:flex md:items-center space-x-4`}>
+        <nav className="hidden md:flex md:items-center space-x-4">
           <ul className="flex space-x-4">
             <li><a href="/" className="text-gray-800 hover:text-green-600">Home</a></li>
             <li><a href="/About" className="text-gray-800 hover:text-green-600">About</a></li>
@@ -49,14 +49,16 @@ const Header = () => {
         >
           {() => (
             <div className="md:hidden flex flex-col items-center space-y-4 mt-4 w-full bg-black shadow-lg py-4 absolute top-full left-0">
-              <img src={cartIcon} alt="cart-icon" className="w-6 h-6" />
-              <img src={userIcon} alt="User-icon" className="w-6 h-6" />
               <ul className="flex flex-col items-center space-y-4">
                 <li><a href="/" className="text-white hover:text-green-600">Home</a></li>
                 <li><a href="/About" className="text-white hover:text-green-600">About</a></li>
                 <li><a href="/Menu" className="text-white hover:text-green-600">Menu</a></li>
                 <li><a href="/Reservation" className="text-white hover:text-green-600">Reservation</a></li>
               </ul>
+              <div className="flex space-x-4">
+                <img src={cartIcon} alt="cart-icon" className="w-6 h-6" />
+                <img src={userIcon} alt="User-icon" className="w-6 h-6" />
+              </div>
             </div>
           )}
         </Transition>

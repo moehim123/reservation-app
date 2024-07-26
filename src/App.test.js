@@ -1,57 +1,69 @@
 import React from 'react';
-import { act, render, screen, fireEvent } from '@testing-library/react';
-import { initializeTimes, updateTimes } from './ReducerFunctions';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import BookingForm from './BookingForm';
-import '@testing-library/jest-dom';
+import { fetchAPI } from './Api/fetchAPI';
 
-const mockDispatch = jest.fn();
+jest.mock('./Api/fetchAPI', () => ({
+  fetchAPI: jest.fn(),
+}));
 
+describe('BookingForm Component', () => {
+  let container;
 
-test('BookingForm can be submitted by the user', () => {
+  beforeEach(() => {
+    fetchAPI.mockReset();
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
 
-  render(<BookingForm availableTimes={['10:00 AM', '11:00 AM']} dispatch={mockDispatch} />);
+  afterEach(() => {
+    document.body.removeChild(container);
+    container = null;
+  });
 
-  fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'John' } });
-  fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: 'Doe' } });
-  fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'john.doe@example.com' } });
-  fireEvent.change(screen.getByLabelText(/Date/i), { target: { value: '2024-08-01' } });
-  fireEvent.change(screen.getByLabelText(/Available Time/i), { target: { value: '10:00 AM' } });
+  it('should initialize times correctly', async () => {
+    fetchAPI.mockResolvedValue(['10:00 AM', '11:00 AM', '12:00 PM']);
+    const dispatch = jest.fn();
 
+    await act(async () => {
+      render(
+        <MemoryRouter>
+          <BookingForm availableTimes={[]} dispatch={dispatch} />
+        </MemoryRouter>,
+        { container }
+      );
+    });
 
-  fireEvent.click(screen.getByLabelText(/Indoor/i));
+    await waitFor(() => {
+      expect(dispatch).toHaveBeenCalledWith({
+        type: 'UPDATE_TIMES',
+        payload: ['10:00 AM', '11:00 AM', '12:00 PM'],
+      });
+    });
+  });
 
-  fireEvent.click(screen.getByText(/Next/i));
+  it('should update times based on selected date', async () => {
+    fetchAPI.mockResolvedValue(['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00']);
+    const dispatch = jest.fn();
 
-  expect(mockDispatch).toHaveBeenCalledWith({ type: 'UPDATE_TIMES', date: '2024-08-01' });
+    await act(async () => {
+      render(
+        <MemoryRouter>
+          <BookingForm availableTimes={[]} dispatch={dispatch} />
+        </MemoryRouter>,
+        { container }
+      );
+    });
+
+    const dateInput = screen.getByLabelText(/date/i);
+    fireEvent.change(dateInput, { target: { value: '2024-07-30' } });
+
+    await waitFor(() => {
+      expect(dispatch).toHaveBeenCalledWith({
+        type: 'UPDATE_TIMES',
+        payload: ['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'],
+      });
+    });
+  });
 });
-
-
-test('Renders the BookingForm heading and text', () => {
-  render(<BookingForm availableTimes={[]} dispatch={() => {}} />);
-
-  const headingElement = screen.getByText(/Book a table by filling form below and check your email for details of the booking/i);
-  expect(headingElement).toBeInTheDocument();
-
-  const additionalTextElement = screen.getByText(/We Charge \$50 deposit to hold your booking for you/i);
-  expect(additionalTextElement).toBeInTheDocument();
-});
-
-test('initializeTimes returns correct initial times', () => {
-  const initialTimes = initializeTimes();
-  expect(initialTimes).toEqual(["17:00", "18:00", "19:00", "20:00", "21:00", "22:00"]); // Adjusted time values
-});
-
-test('updateTimes returns correct times based on the date', () => {
-  const weekdayState = ["18:00", "19:00", "20:00", "21:00", "22:00"];
-  const weekendState = ["17:00", "18:00", "19:00", "20:00"];
-  const weekdayAction = { type: 'UPDATE_TIMES', date: '2024-07-25' }; // Weekday
-  const weekendAction = { type: 'UPDATE_TIMES', date: '2024-07-27' }; // Weekend
-
-  const weekdayUpdatedState = updateTimes([], weekdayAction);
-  const weekendUpdatedState = updateTimes([], weekendAction);
-
-  expect(weekdayUpdatedState).toEqual(weekdayState);
-  expect(weekendUpdatedState).toEqual(weekendState);
-});
-
-
