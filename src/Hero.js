@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <main className="bg-[#78d454] py-14">

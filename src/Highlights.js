@@ -32,7 +32,7 @@ const Highlights = () => {
         <div className="flex items-center justify-between w-full">
           <h1 className="text-black text-3xl font-semibold">Specials</h1>
           <button className="button-hover-effect w-[157px] h-[39px] px-6 py-2.5 bg-[#78d454] rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center">
-            <div className="text-white text-base font-medium">Our Menu</div>
+            <div className="text-black text-base font-medium">Our Menu</div>
           </button>
         </div>
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center md:justify-start">
