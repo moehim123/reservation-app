@@ -18,3 +18,58 @@ html, body, #root {
 .flex-grow {
   flex-grow: 1;
 }
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-animation {
+  animation: rotate 10s linear infinite;
+}
+.button-hover-effect {
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+}
+
+.button-hover-effect:hover {
+  background-color: white;
+  color: black;
+  border: 2px solid black;
+}
+
+.radio-style {
+  appearance: none;
+  background-color: #fff;
+  border: 2px solid #78d454;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.radio-style:checked::before {
+  content: '';
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #78d454;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url('./Images/arrowSelectIcon.svg') no-repeat right 0.75rem center;
+  background-size: 0.5rem;
+  padding-right: 1.5rem;
+}

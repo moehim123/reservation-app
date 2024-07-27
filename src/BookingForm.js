@@ -6,7 +6,6 @@ import Increase from "./Images/positiveSign.svg";
 import Decrease from "./Images/negativeSign.svg";
 import creditCard from "./Images/creditCards.svg";
 import { submitAPI } from "./Api/fetchAPI";
-import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import InputMask from 'react-input-mask';
 
@@ -58,7 +57,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
     }
   };
 
-  const fieldStyle = "h-[54px] bg-[#fefffd] rounded-3xl border border-[#78d454] w-full md:w-[326px] py-4 px-4";
+  const fieldStyle = "h-[54px] bg-[#fefffd] rounded-3xl border border-[#78d454] w-full md:w-[326px] py-4 px-4 pl-4 ";
   const labelStyle = "text-black text-base font-medium";
 
   const formik = useFormik({
@@ -114,7 +113,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
     switch (step) {
       case 1:
         return (
-          <div className="container mx-auto px-4 md:px-8 py-8 space-y-6">
+          <div className="container mx-auto px-4 md:px-8 py-8 space-y-14">
             <div className="flex flex-col items-left space-y-2">
               <label htmlFor="firstName" className={labelStyle}>First Name</label>
               <input
@@ -184,7 +183,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
               <select
                 id="time"
                 name="time"
-                className={fieldStyle}
+                className = {`${fieldStyle} pr-8`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.time}
@@ -202,27 +201,27 @@ const BookingForm = ({ availableTimes, dispatch }) => {
             <div className="flex flex-col items-left space-y-4">
               <label className={labelStyle}>Location</label>
               <div className="flex space-x-8">
-                <label>
+                <label className="flex items-center space-x-2">
                   <input
                     type="radio"
                     name="location"
                     value="indoor"
                     checked={formik.values.location === 'indoor'}
                     onChange={formik.handleChange}
-                    className="w-3.5 h-3.5  rounded-full border-2 border-[#78d454]"
-                  />
-                  Indoor
+                    className = "radio-style"
+                    />
+                  <span>Indoor</span>
                 </label>
-                <label>
+                <label className="flex items-center space-x-2">
                   <input
                     type="radio"
                     name="location"
                     value="outdoor"
                     checked={formik.values.location === 'outdoor'}
                     onChange={formik.handleChange}
-                    className="w-3.5 h-3.5 rounded-full border-2 border-[#78d454]"
+                    className = "radio-style"
                   />
-                  Outdoor
+                  <span>Outdoor</span>
                 </label>
               </div>
             </div>
@@ -313,16 +312,7 @@ const BookingForm = ({ availableTimes, dispatch }) => {
                 ) : null}
               </div>
 
-              <div className="flex justify-center mt-4">
-                <Cards
-                  number={cardDetails.cardNumber}
-                  name={formik.values.firstName + ' ' + formik.values.lastName}
-                  expiry={cardDetails.expiryDate}
-                  cvc={cardDetails.cvv}
-                  focused={cardDetails.focused}
-                />
               </div>
-            </div>
           </>
         );
       default:
@@ -331,14 +321,13 @@ const BookingForm = ({ availableTimes, dispatch }) => {
   };
 
   const handleNextStep = async () => {
-    // Validate the form
+
     await formik.validateForm();
 
-    // Check if there are errors
+
     if (Object.keys(formik.errors).length === 0) {
       setStep(step + 1);
     } else {
-      // Touch all fields to show validation errors
       formik.setTouched({
         firstName: true,
         lastName: true,
@@ -360,7 +349,8 @@ const BookingForm = ({ availableTimes, dispatch }) => {
 
   return (
     <>
-      <div className="container mx-auto flex flex-col md:flex-row md:space-x-8 px-4 bg-[#78d454] py-14">
+      <div className="w-full bg-[#78d454] py-14">
+      <div className="container mx-auto flex flex-col md:flex-row md:space-x-8 px-4">
         <div className="flex flex-col space-y-4 md:space-y-6 md:w-1/2 text-center md:text-left">
           <h1 className="text-black text-2xl font-semibold md:text-2xl lg:text-3xl">
             Book a table by filling form below and check your email for details of the booking
@@ -371,18 +361,20 @@ const BookingForm = ({ availableTimes, dispatch }) => {
         </div>
 
         <div className="mt-8 md:mt-0 flex justify-center">
-          <img src={creditCard} alt="Hero-Image-credit-card" className="w-[235px] h-[168px] " />
+          <img src={creditCard} alt="Hero-Image-credit-card" className="w-[235px] h-[168px]" />
         </div>
       </div>
+    </div>
+
 
       <div className="container mx-auto my-8 flex justify-center items-center">
         <div className="flex items-center space-x-4">
           <div className={`w-14 h-14 rounded-full ${step >= 1 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
-          <div className="h-2 w-24 bg-black relative">
+          <div className="h-2 w-24 bg-black rounded-full  relative">
             <div className={`absolute h-1 ${step >= 2 ? 'bg-[#78d454]' : 'bg-black'} transition-all duration-300`} style={{ width: step >= 2 ? '100%' : '0%' }}></div>
           </div>
           <div className={`w-14 h-14 rounded-full ${step >= 2 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
-          <div className="h-2 w-24 bg-black relative">
+          <div className="h-2 w-24 bg-black rounded-full relative">
             <div className={`absolute h-1 ${step >= 3 ? 'bg-[#78d454]' : 'bg-black'} transition-all duration-300`} style={{ width: step >= 3 ? '100%' : '0%' }}></div>
           </div>
           <div className={`w-14 h-14 rounded-full ${step >= 3 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
@@ -393,17 +385,17 @@ const BookingForm = ({ availableTimes, dispatch }) => {
         {renderStepContent()}
         <div className="flex justify-end mt-8 space-x-4">
           {step > 1 && (
-            <button type="button" onClick={handlePrevStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
+            <button type="button" onClick={handlePrevStep} className="button-hover-effect w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
               Previous
             </button>
           )}
           {step < 2 && (
-            <button type="button" onClick={handleNextStep} className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
+            <button type="button" onClick={handleNextStep} className="button-hover-effect w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
               Next
             </button>
           )}
           {step === 2 && (
-            <button type="submit" className="w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
+            <button type="submit" className=" button-hover-effect w-[157px] md:w-[180px] h-10 px-6 py-2.5 bg-black rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center gap-2.5 text-white text-base font-medium">
               Submit
             </button>
           )}

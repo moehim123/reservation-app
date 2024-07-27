@@ -10,6 +10,15 @@ import Footer from './Footer';
 import BookingForm from './BookingForm';
 import ConfirmedBooking from './ConfirmedBooking';
 import { initializeTimes, updateTimes } from './ReducerFunctions';
+import withSkeletonLoader from './withSkeletonLoader';
+
+const HeroWithSkeleton = withSkeletonLoader(Hero);
+const HighlightsWithSkeleton = withSkeletonLoader(Highlights);
+const TestimonialsWithSkeleton = withSkeletonLoader(Testimonials);
+const AboutusWithSkeleton = withSkeletonLoader(Aboutus);
+const BookingFormWithSkeleton = withSkeletonLoader(BookingForm);
+const ConfirmedBookingWithSkeleton = withSkeletonLoader(ConfirmedBooking);
+
 
 function MainApp() {
   const [availableTimes, dispatch] = useReducer(updateTimes, [], initializeTimes);
@@ -21,14 +30,14 @@ function MainApp() {
         <Routes>
           <Route path="/" element={
             <>
-              <Hero className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-              <Highlights className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-              <Testimonials className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
-              <Aboutus className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+              <HeroWithSkeleton className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+              <HighlightsWithSkeleton className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+              <TestimonialsWithSkeleton className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
+              <AboutusWithSkeleton className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />
             </>
           } />
-          <Route path="/booking" element={<BookingForm availableTimes={availableTimes} dispatch={dispatch} />} />
-          <Route path="/confirmed" element={<ConfirmedBooking />} />
+          <Route path="/booking" element={<BookingFormWithSkeleton availableTimes={availableTimes} dispatch={dispatch} />} />
+          <Route path="/confirmed" element={<ConfirmedBookingWithSkeleton />} />
         </Routes>
       </div>
       <Footer className="min-h-screen grid grid-cols-1 md:grid-cols-2 py-8" />

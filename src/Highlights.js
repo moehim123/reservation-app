@@ -31,18 +31,21 @@ const Highlights = () => {
       <div className="container mx-auto w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="text-black text-3xl font-semibold">Specials</h1>
-          <button className="w-[157px] h-[39px] px-6 py-2.5 bg-[#78d454] rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center">
+          <button className="button-hover-effect w-[157px] h-[39px] px-6 py-2.5 bg-[#78d454] rounded-[18px] shadow backdrop-blur-[8.70px] flex justify-center items-center">
             <div className="text-white text-base font-medium">Our Menu</div>
           </button>
         </div>
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center md:justify-start">
           {meals.map((meal, index) => (
             <div key={index} className="bg-[#f2f2f1] w-full md:w-[280px] rounded-lg overflow-hidden shadow-md mx-auto">
-              <img
-                className="justify-center h-[180px] object-cover rounded-tl-[18px] rounded-tr-[18px] border-b border-grey"
-                src={meal.image}
-                alt={`${meal.title}-image`}
-              />
+              <div className="flex justify-center items-center h-[180px]">
+                <img
+                  className="object-contain h-full"
+                  src={meal.image}
+                  alt={`${meal.title}-image`}
+                  loading="lazy"
+                />
+              </div>
               <div className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-14">
@@ -55,7 +58,7 @@ const Highlights = () => {
                 <p className="text-black text-base font-light mt-2">{meal.description}</p>
                 <div className="flex items-center mt-4">
                   <h2 className="text-black text-base font-medium mr-2">Add to cart</h2>
-                  <img src={Cart} alt="Add to cart" className="w-6 h-6"/>
+                  <img src={Cart} alt="Add to cart" className="w-6 h-6" />
                 </div>
               </div>
             </div>
