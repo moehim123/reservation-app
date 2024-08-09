@@ -27,7 +27,8 @@ git clone https://github.com/yourusername/book-my-table.git
 cd book-my-table
 
 Install dependencies:
-npm install
+npm install --force
+
 
 Run the application:
 npm start
