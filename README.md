@@ -27,7 +27,7 @@ git clone https://github.com/yourusername/book-my-table.git
 cd book-my-table
 
 Install dependencies:
-npm install --force
+npm install --legacy-peer-deps  
 
 
 Run the application:
