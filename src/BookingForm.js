@@ -6,7 +6,6 @@ import Increase from "./Images/positiveSign.svg";
 import Decrease from "./Images/negativeSign.svg";
 import creditCard from "./Images/creditCards.svg";
 import { submitAPI } from "./Api/fetchAPI";
-import 'react-credit-cards/es/styles-compiled.css';
 import InputMask from 'react-input-mask';
 
 const BookingForm = ({ availableTimes, dispatch }) => {
@@ -367,19 +366,19 @@ const BookingForm = ({ availableTimes, dispatch }) => {
     </div>
 
 
-      <div className="container mx-auto my-8 flex justify-center items-center">
-        <div className="flex items-center space-x-4">
-          <div className={`w-14 h-14 rounded-full ${step >= 1 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
-          <div className="h-2 w-24 bg-black rounded-full  relative">
-            <div className={`absolute h-1 ${step >= 2 ? 'bg-[#78d454]' : 'bg-black'} transition-all duration-300`} style={{ width: step >= 2 ? '100%' : '0%' }}></div>
-          </div>
-          <div className={`w-14 h-14 rounded-full ${step >= 2 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
-          <div className="h-2 w-24 bg-black rounded-full relative">
-            <div className={`absolute h-1 ${step >= 3 ? 'bg-[#78d454]' : 'bg-black'} transition-all duration-300`} style={{ width: step >= 3 ? '100%' : '0%' }}></div>
-          </div>
-          <div className={`w-14 h-14 rounded-full ${step >= 3 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
-        </div>
-      </div>
+    <div className="container mx-auto my-8 flex justify-center items-center">
+  <div className="flex items-center space-x-4">
+    <div className={`w-14 h-14 rounded-full ${step >= 1 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
+    <div className="h-2 w-24 bg-black rounded-full relative overflow-hidden">
+      <div className={`absolute h-full bg-[#78d454] transition-all duration-300`} style={{ width: step >= 2 ? '100%' : '0%' }}></div>
+    </div>
+    <div className={`w-14 h-14 rounded-full ${step >= 2 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
+    <div className="h-2 w-24 bg-black rounded-full relative overflow-hidden">
+      <div className={`absolute h-full bg-[#78d454] transition-all duration-300`} style={{ width: step >= 3 ? '100%' : '0%' }}></div>
+    </div>
+    <div className={`w-14 h-14 rounded-full ${step >= 3 ? 'bg-[#78d454]' : 'bg-black'}`}></div>
+  </div>
+  </div>
 
       <form onSubmit={formik.handleSubmit} className="max-w-[1080px] mx-auto p-8">
         {renderStepContent()}
